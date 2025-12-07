@@ -6,8 +6,7 @@
     <title>AI 면접 피드백 시스템 | Professional Dashboard</title>
     <style>
         /*
-        * Professional White-Tone Style CSS
-        * 특징: 밝은 배경, 깔끔한 구분선, 전문적인 딥 블루 강조색
+        * Professional White-Tone Style CSS (이전 버전과 동일)
         */
         :root {
             --color-light-bg: #f5f7fa; /* 메인 밝은 배경 */
@@ -37,7 +36,7 @@
             max-width: 1300px;
             padding: 40px 20px;
             display: grid;
-            grid-template-columns: 1fr 2fr; /* 입력 폼:결과 영역 = 1:2 비율로 전문성 강조 */
+            grid-template-columns: 1fr 2fr;
             gap: 30px;
         }
 
@@ -76,7 +75,7 @@
         label {
             display: block;
             margin-bottom: 6px;
-            font-weight: 600; /* 세미 볼드 */
+            font-weight: 600;
             color: var(--color-text-dark);
         }
 
@@ -145,7 +144,7 @@
         }
 
         #feedback-output {
-            flex-grow: 1; /* 남은 공간을 채우도록 설정 */
+            flex-grow: 1;
         }
 
         .feedback-item {
@@ -167,7 +166,7 @@
         
         .feedback-item .score {
             font-size: 1.4em;
-            color: var(--color-success); /* 점수는 성공(녹색) 강조 */
+            color: var(--color-success);
             font-weight: 700;
         }
 
@@ -236,8 +235,9 @@
 </div>
 
 <script>
-    // 💡 핵심 요구 사항: API 서버의 주소를 담는 상수
-    const SERVER_URL = 'https://dd626e14-459a-44be-acc0-de7206ad3160-00-20gy5cnibptjp.sisko.replit.dev'; 
+    // 💡 핵심 수정 사항: 새로운 Replit/GitHub 배포 서버 URL 적용
+    const BASE_URL = 'https://dd626e14-459a-44be-acc0-de7206ad3160-00-20gy5cnibptjp.sisko.replit.dev';
+    const SERVER_URL = `${BASE_URL}/generate_feedback`; 
 
     const form = document.getElementById('feedbackForm');
     const loadingDiv = document.getElementById('loading');
@@ -253,7 +253,6 @@
     async function register(e) {
         e.preventDefault();
         
-        // 입력 필드의 데이터를 모아 JSON 형태로 구성
         const data = {
             company: document.getElementById('company').value,
             role: document.getElementById('role').value,
@@ -269,13 +268,11 @@
         submitButton.textContent = '처리 중...';
 
         try {
-            // 💡 핵심 요구 사항: fetch 함수를 포함한 통신 로직
             const response = await fetch(SERVER_URL, {
-                method: 'POST', // 통신 방식: POST
+                method: 'POST', 
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                // JSON 데이터: 입력 필드 데이터를 JSON 문자열로 변환하여 전송
                 body: JSON.stringify(data) 
             });
 
@@ -300,9 +297,10 @@
             
             feedbackOutputDiv.innerHTML = `
                 <div class="feedback-item error">
-                    <strong>❌ 통신 오류!</strong>
+                    <strong>❌ 통신 오류! (Failed to fetch)</strong>
                     <p>${error.message}</p>
-                    <p>FastAPI 서버(main.py)가 실행 중이고, 터미널에서 API Key 설정이 완료되었는지 확인하십시오.</p>
+                    <p>현재 서버 URL: <code>${SERVER_URL}</code></p>
+                    <p>FastAPI 서버가 해당 주소에서 정상 작동 중이며, 방화벽이나 네트워크 문제가 없는지 확인하십시오.</p>
                 </div>`;
             rawJsonOutput.textContent = '통신 실패 또는 서버 오류.';
             
@@ -320,7 +318,6 @@
     function displayFeedback(data) {
         let htmlContent = '';
         
-        // 백엔드에서 약속한 JSON 키를 전문적인 제목으로 매핑
         const displayKeys = {
             '요약': '✅ 핵심 분석 요약', 
             '점수': '⭐ 최종 평가 점수', 
@@ -337,7 +334,6 @@
                 if (key === '점수') {
                     contentHtml = `<span class="score">${content} / 10점</span>`;
                 } else {
-                    // 줄바꿈 문자(\n)를 <br> 태그로 변환하여 보고서 가독성 확보
                     contentHtml = content.replace(/\n/g, '<br>');
                 }
 
@@ -355,6 +351,4 @@
 </script>
 
 </body>
-
 </html>
-
