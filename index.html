@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 면접 피드백 시스템 | Professional Dashboard</title>
+    <style>
+        /*
+        * Professional White-Tone Style CSS
+        * 특징: 밝은 배경, 깔끔한 구분선, 전문적인 딥 블루 강조색
+        */
+        :root {
+            --color-light-bg: #f5f7fa; /* 메인 밝은 배경 */
+            --color-surface: #ffffff; /* 카드/패널 배경 */
+            --color-primary-blue: #007bff; /* 전문적인 딥 블루 강조색 */
+            --color-text-dark: #333333; /* 어두운 텍스트 */
+            --color-text-sub: #6c757d; /* 서브 텍스트 */
+            --color-border-light: #e0e0e0;
+            --color-success: #28a745;
+            --color-warning: #ffc107;
+            --color-error: #dc3545;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-light-bg);
+            color: var(--color-text-dark);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1300px;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 1fr 2fr; /* 입력 폼:결과 영역 = 1:2 비율로 전문성 강조 */
+            gap: 30px;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            padding-bottom: 25px;
+            border-bottom: 3px solid var(--color-primary-blue);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: var(--color-primary-blue);
+            margin: 0;
+        }
+
+        /* 공통 카드 스타일 */
+        .card {
+            background-color: var(--color-surface);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--color-border-light);
+        }
+
+        h2 {
+            font-size: 1.4em;
+            margin-top: 0;
+            color: var(--color-text-dark);
+            border-bottom: 1px solid var(--color-border-light);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* 폼 요소 스타일 */
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600; /* 세미 볼드 */
+            color: var(--color-text-dark);
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--color-border-light);
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #fcfcfc;
+            color: var(--color-text-dark);
+            font-size: 1em;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: var(--color-primary-blue);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* 버튼 스타일 */
+        #submitButton {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--color-primary-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: bold;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+        }
+
+        #submitButton:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+
+        #submitButton:disabled {
+            background-color: #a0c9f5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* 결과 영역 스타일 */
+        .result-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--color-primary-blue);
+            font-size: 1.1em;
+            font-weight: 500;
+            display: none;
+        }
+
+        #feedback-output {
+            flex-grow: 1; /* 남은 공간을 채우도록 설정 */
+        }
+
+        .feedback-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 4px solid var(--color-primary-blue);
+            background-color: #f7f9fc;
+            border-radius: 4px;
+        }
+
+        .feedback-item strong {
+            display: block;
+            font-size: 1.1em;
+            color: var(--color-text-dark);
+            margin-bottom: 5px;
+            border-bottom: 1px dashed var(--color-border-light);
+            padding-bottom: 5px;
+        }
+        
+        .feedback-item .score {
+            font-size: 1.4em;
+            color: var(--color-success); /* 점수는 성공(녹색) 강조 */
+            font-weight: 700;
+        }
+
+        .error {
+            color: var(--color-error);
+            font-weight: bold;
+        }
+
+        pre {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid var(--color-border-light);
+            color: #495057;
+            font-size: 0.9em;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>💎 Gemini Interview Analysis Dashboard</h1>
+        <p style="color: var(--color-text-sub); margin: 5px 0 0;">전문적인 AI 기술을 활용하여 답변의 품질을 심층 분석합니다.</p>
+    </header>
+
+    <div class="card input-section">
+        <h2>데이터 입력</h2>
+        <form id="feedbackForm">
+            <label for="company">지원 회사</label>
+            <input type="text" id="company" value="Tesla" required>
+
+            <label for="role">지원 직무</label>
+            <input type="text" id="role" value="머신러닝 엔지니어" required>
+
+            <label for="question">자기소개서 문항 / 면접 질문</label>
+            <textarea id="question" required>Transformer 모델의 Self-Attention 메커니즘을 설명하고, 왜 RNN보다 우수한지 비교 설명해주세요.</textarea>
+
+            <label for="answer">나의 답변</label>
+            <textarea id="answer" required>Self-Attention은 시퀀스 내의 모든 단어 쌍 간의 관계를 한 번에 계산하여 중요도를 판단하는 메커니즘입니다. RNN은 순차적으로 처리하기 때문에 병렬화가 어렵고 장기 의존성 문제가 있지만, 트랜스포머는 이 문제를 해결합니다.</textarea>
+
+            <button type="submit" id="submitButton">
+                📈 분석 요청 및 피드백 생성
+            </button>
+        </form>
+    </div>
+
+    <div class="card result-section">
+        <h2>AI 분석 결과 및 보고서</h2>
+        
+        <div id="loading">... 데이터 전송 중 | AI 모델 처리 중 ...</div>
+
+        <div id="feedback-output">
+            <div class="feedback-item">
+                <p style="color: var(--color-text-sub);">왼쪽 입력 폼에 정보를 기입 후, 분석 요청 버튼을 클릭하여 전문 보고서를 확인하세요.</p>
+            </div>
+        </div>
+        
+        <h3 style="margin-top: 30px; color: var(--color-text-sub); font-size: 1.1em; border-bottom: 1px solid var(--color-border-light); padding-bottom: 5px;">API 원본 JSON 데이터</h3>
+        <pre id="raw-json-output">결과 대기 중...</pre>
+    </div>
+</div>
+
+<script>
+    // 💡 핵심 요구 사항: API 서버의 주소를 담는 상수
+    const SERVER_URL = 'http://127.0.0.1:8000/generate_feedback'; 
+
+    const form = document.getElementById('feedbackForm');
+    const loadingDiv = document.getElementById('loading');
+    const feedbackOutputDiv = document.getElementById('feedback-output');
+    const rawJsonOutput = document.getElementById('raw-json-output');
+    const submitButton = document.getElementById('submitButton');
+
+    form.addEventListener('submit', register); 
+
+    /**
+     * 면접 데이터를 수집하여 FastAPI 서버에 비동기 POST 요청을 보냅니다.
+     */
+    async function register(e) {
+        e.preventDefault();
+        
+        // 입력 필드의 데이터를 모아 JSON 형태로 구성
+        const data = {
+            company: document.getElementById('company').value,
+            role: document.getElementById('role').value,
+            question: document.getElementById('question').value,
+            answer: document.getElementById('answer').value
+        };
+
+        // UI 상태 업데이트: 로딩 시작
+        loadingDiv.style.display = 'block';
+        feedbackOutputDiv.innerHTML = '';
+        rawJsonOutput.textContent = '데이터 요청 및 서버 응답 대기 중...';
+        submitButton.disabled = true;
+        submitButton.textContent = '처리 중...';
+
+        try {
+            // 💡 핵심 요구 사항: fetch 함수를 포함한 통신 로직
+            const response = await fetch(SERVER_URL, {
+                method: 'POST', // 통신 방식: POST
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // JSON 데이터: 입력 필드 데이터를 JSON 문자열로 변환하여 전송
+                body: JSON.stringify(data) 
+            });
+
+            if (!response.ok) {
+                let errorDetail = response.statusText;
+                try {
+                    const errorData = await response.json();
+                    errorDetail = errorData.detail || errorDetail;
+                } catch {} 
+                throw new Error(`API 통신 오류 (${response.status}): ${errorDetail}`);
+            }
+
+            const feedbackJson = await response.json();
+            
+            // 성공적으로 데이터를 받은 후 처리
+            displayFeedback(feedbackJson);
+            rawJsonOutput.textContent = JSON.stringify(feedbackJson, null, 2);
+
+        } catch (error) {
+            // 통신 오류 발생 시 사용자에게 메시지 표시
+            console.error('API 호출 중 오류 발생:', error);
+            
+            feedbackOutputDiv.innerHTML = `
+                <div class="feedback-item error">
+                    <strong>❌ 통신 오류!</strong>
+                    <p>${error.message}</p>
+                    <p>FastAPI 서버(main.py)가 실행 중이고, 터미널에서 API Key 설정이 완료되었는지 확인하십시오.</p>
+                </div>`;
+            rawJsonOutput.textContent = '통신 실패 또는 서버 오류.';
+            
+        } finally {
+            // UI 상태 업데이트: 로딩 종료 및 버튼 활성화
+            loadingDiv.style.display = 'none';
+            submitButton.disabled = false;
+            submitButton.textContent = '📈 분석 요청 및 피드백 생성';
+        }
+    }
+
+    /**
+     * AI 응답 JSON을 전문적인 HTML 보고서 형식으로 표시하는 함수
+     */
+    function displayFeedback(data) {
+        let htmlContent = '';
+        
+        // 백엔드에서 약속한 JSON 키를 전문적인 제목으로 매핑
+        const displayKeys = {
+            '요약': '✅ 핵심 분석 요약', 
+            '점수': '⭐ 최종 평가 점수', 
+            '피드백': '💡 상세 피드백 및 개선 방안', 
+            '추가_질문': '❓ 후속 인터뷰 질문'
+        };
+        
+        for (const key in displayKeys) {
+            if (data[key] !== undefined) {
+                const title = displayKeys[key];
+                const content = data[key];
+                
+                let contentHtml;
+                if (key === '점수') {
+                    contentHtml = `<span class="score">${content} / 10점</span>`;
+                } else {
+                    // 줄바꿈 문자(\n)를 <br> 태그로 변환하여 보고서 가독성 확보
+                    contentHtml = content.replace(/\n/g, '<br>');
+                }
+
+                htmlContent += `
+                    <div class="feedback-item">
+                        <strong>${title}</strong>
+                        ${contentHtml}
+                    </div>
+                `;
+            }
+        }
+
+        feedbackOutputDiv.innerHTML = htmlContent;
+    }
+</script>
+
+</body>
+</html>
