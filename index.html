@@ -3,318 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 면접 도우미 - 전문 웹 서비스</title>
+    <title>💡 AI 레시피 파인더 - 냉장고를 부탁해 (수직형)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* CSS: 전문적이고 깔끔한 화이트톤 디자인 */
+        /* CSS 스타일링 */
         :root {
-            --primary-color: #007bff; /* 파란색 계열 강조 */
-            --background-light: #ffffff;
-            --text-dark: #333333;
-            --border-light: #e0e0e0;
-            --shadow-subtle: 0 4px 8px rgba(0, 0, 0, 0.05);
+            --main-bg-color: #f7f7f7;
+            --card-bg-color: #ffffff;
+            --primary-color: #ff9933; /* 요리와 어울리는 따뜻한 주황색 */
+            --text-color: #333333;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius-base: 10px;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Noto Sans KR', 'Roboto', sans-serif;
+            background-color: var(--main-bg-color);
+            color: var(--text-color);
             margin: 0;
-            padding: 0;
-            background-color: #f4f7f6;
-            color: var(--text-dark);
+            padding: 20px;
             line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 25px;
-            background: var(--background-light);
-            border-radius: 12px;
-            box-shadow: var(--shadow-subtle);
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
 
         header {
             text-align: center;
-            padding-bottom: 20px;
+            padding: 20px 0;
             border-bottom: 3px solid var(--primary-color);
-            margin-bottom: 25px;
+            margin-bottom: 5px;
         }
 
         header h1 {
             color: var(--primary-color);
+            font-weight: 700;
             margin: 0;
             font-size: 2em;
         }
 
+        /* 공통 섹션 스타일 */
+        .section-card {
+            background-color: var(--card-bg-color);
+            padding: 30px;
+            border-radius: var(--border-radius-base);
+            box-shadow: var(--shadow-light);
+        }
+
+        .section-card h2 {
+            color: var(--primary-color);
+            border-bottom: 2px dashed #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-weight: 400;
+        }
+
         /* 입력 폼 스타일 */
-        .input-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #555;
         }
 
-        label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-dark);
-        }
-
-        input[type="text"],
-        textarea {
-            padding: 12px;
-            border: 1px solid var(--border-light);
-            border-radius: 6px;
-            font-size: 1rem;
+        .form-group input[type="text"],
+        .form-group select {
             width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             box-sizing: border-box;
+            font-size: 16px;
             transition: border-color 0.3s;
         }
 
-        input[type="text"]:focus,
-        textarea:focus {
+        .form-group input[type="text"]:focus,
+        .form-group select:focus {
             border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
         }
-
-        textarea {
-            resize: vertical;
-            min-height: 150px;
-        }
-
-        .full-width {
-            grid-column: span 2; /* 자기소개서 관련 항목 전체 너비 사용 */
-        }
-
+        
         /* 버튼 스타일 */
-        button {
-            display: block;
+        button#submit-button {
             width: 100%;
             padding: 15px;
             background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.1s;
+            margin-top: 20px;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        button#submit-button:hover {
+            background-color: #e68a2e;
         }
 
-        button:active {
-            transform: translateY(1px);
+        button#submit-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
 
-        /* 결과 영역 스타일 */
-        .result-section {
-            margin-top: 30px;
-            padding-top: 25px;
-            border-top: 1px dashed var(--border-light);
+
+        /* 결과 출력 영역 */
+        #recipe-output {
+            min-height: 200px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            background-color: #fcfcfc;
         }
 
-        .result-section h2 {
-            color: var(--primary-color);
-            border-left: 5px solid var(--primary-color);
-            padding-left: 10px;
-            margin-bottom: 20px;
-        }
-
-        .result-box {
-            background-color: #f9f9f9;
+        .loading-text {
+            color: #888;
+            font-style: italic;
+            text-align: center;
             padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-light);
-            white-space: pre-wrap; /* 줄바꿈 유지 */
-            min-height: 50px; /* 최소 높이 */
-            overflow-x: auto;
+        }
+
+        .recipe-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-top: 10px;
         }
         
-        .loading-message {
-            text-align: center;
-            font-size: 1.1em;
-            color: #ffc107; /* 주황색 계열 로딩 메시지 */
-            font-weight: 600;
-            margin-top: 15px;
-            display: none; /* 초기에는 숨김 */
+        /* ******************************************* */
+        /* 추가 팁 항목 스타일링 강화 */
+        /* ******************************************* */
+        .tip-section {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius-base);
+            background-color: #fffaf5; /* 부드러운 배경색 */
         }
-
-        .error-message {
-            text-align: center;
-            font-size: 1.1em;
-            color: #dc3545; /* 빨간색 계열 오류 메시지 */
-            font-weight: 600;
+        
+        .tip-section h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tip-section h3::before {
+            content: '👨‍🍳'; /* 셰프 이모지 */
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .tip-section p {
+            margin-bottom: 0;
+            font-style: italic;
+        }
+        
+        /* 레시피 본문 (pre 태그 내부) 스타일 */
+        #recipe-output pre {
+            border-top: 1px dashed #ddd;
+            padding-top: 15px;
             margin-top: 15px;
-            display: none; /* 초기에는 숨김 */
         }
     </style>
 </head>
 <body>
     <div class="container">
+        
         <header>
-            <h1>🌟 AI 기반 면접 질문 예측 시스템</h1>
-            <p>지원 정보를 입력하시면, AI가 예상 질문과 모범 답변을 생성합니다.</p>
+            <h1>💡 AI 레시피 파인더</h1>
+            <p>냉장고 재료를 기반으로 구글 제미나이가 새로운 레시피를 제안해 드립니다.</p>
         </header>
 
-        <section class="input-section">
-            <div class="input-group">
-                <label for="company">지원 회사명</label>
-                <input type="text" id="company" placeholder="예: Google Korea" required>
-            </div>
-            <div class="input-group">
-                <label for="jobTitle">지원 직무</label>
-                <input type="text" id="jobTitle" placeholder="예: 백엔드 개발자" required>
-            </div>
-            <div class="input-group full-width">
-                <label for="question">자기소개서 문항</label>
-                <textarea id="question" placeholder="예: 지원한 직무에 필요한 역량을 갖추기 위해 노력한 경험을 서술해 주십시오." required></textarea>
-            </div>
-            <div class="input-group full-width">
-                <label for="answer">나의 답변 내용</label>
-                <textarea id="answer" placeholder="여기에 자기소개서 답변 내용을 상세히 입력하세요." required></textarea>
+        <section class="section-card input-section">
+            <h2>STEP 1. 재료 및 조건 입력</h2>
+            <form id="recipe-form">
+                
+                <div class="form-group">
+                    <label for="ingredients">나의 재료 (쉼표로 구분)</label>
+                    <input type="text" id="ingredients" name="ingredients" placeholder="예: 양파, 베이컨, 달걀, 파스타면" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="style">요리 스타일</label>
+                    <select id="style" name="style" required>
+                        <option value="">선택하세요</option>
+                        <option value="퓨전 이탈리안">퓨전 이탈리안</option>
+                        <option value="매콤한 한식">매콤한 한식</option>
+                        <option value="간단한 일식">간단한 일식</option>
+                        <option value="건강식">건강식</option>
+                        <option value="독창적인 베이킹">독창적인 베이킹</option>
+                        <option value="자유롭게">자유롭게</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="difficulty">난이도 / 소요 시간</label>
+                    <select id="difficulty" name="difficulty" required>
+                        <option value="">선택하세요</option>
+                        <option value="15분 이내 (초보자)">15분 이내 (초보자)</option>
+                        <option value="30분 이내 (초보자)">30분 이내 (초보자)</option>
+                        <option value="1시간 이내 (중급자)">1시간 이내 (중급자)</option>
+                        <option value="시간 제한 없음 (전문가)">시간 제한 없음 (전문가)</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submit-button">AI 레시피 요청하기</button>
+            </form>
+        </section>
+
+        <section class="section-card result-section">
+            <h2>STEP 2. AI 레시피 결과</h2>
+            <div id="recipe-output">
+                <p class="loading-text">재료를 입력하고 요청 버튼을 누르면 이 곳에 레시피가 나타납니다.</p>
             </div>
         </section>
-        
-        <button id="generateBtn" onclick="register()">
-            면접 예상 질문 & 모범 답변 생성 요청
-        </button>
 
-        <p class="loading-message" id="loadingMessage">
-            잠시만 기다려주세요... AI가 분석 중입니다.
-        </p>
-        
-        <p class="error-message" id="errorMessage">
-            API 통신 오류 발생. (현재 SERVER_URL이 비어있어 예상되는 오류입니다.)
-        </p>
-
-        <section class="result-section">
-            <h2>예상 질문</h2>
-            <div class="result-box" id="expectedQuestions">
-                생성된 예상 질문이 여기에 표시됩니다.
-            </div>
-
-            <h2>모범 답변</h2>
-            <div class="result-box" id="modelAnswer">
-                생성된 모범 답변이 여기에 표시됩니다.
-            </div>
-        </section>
     </div>
 
     <script>
-        // 핵심 요구 사항 1: API 서버의 주소를 담는 상수
-        const SERVER_URL = "https://dd626e14-459a-44be-acc0-de7206ad3160-00-20gy5cnibptjp.sisko.replit.dev/register"; // TODO: 백엔드 서버 주소로 변경 필요
+        // JavaScript 로직
+
+        /** * 핵심 요구 사항: API 서버의 주소를 담는 상수
+         */
+        const SERVER_URL = 'https://your-backend-api.com/generate-recipe'; 
+
+        const form = document.getElementById('recipe-form');
+        const outputDiv = document.getElementById('recipe-output');
+        const submitButton = document.getElementById('submit-button');
+
 
         /**
-         * 핵심 요구 사항 2: register 함수 (API 통신 로직 포함)
+         * @function register
+         * 폼 데이터를 수집하여 서버로 비동기 POST 요청을 보내는 함수입니다.
          */
         async function register() {
-            // UI 요소 가져오기
-            const company = document.getElementById('company').value;
-            const jobTitle = document.getElementById('jobTitle').value;
-            const question = document.getElementById('question').value;
-            const answer = document.getElementById('answer').value;
-            const loadingMessage = document.getElementById('loadingMessage');
-            const errorMessage = document.getElementById('errorMessage');
-            const questionsDiv = document.getElementById('expectedQuestions');
-            const answerDiv = document.getElementById('modelAnswer');
-            const generateBtn = document.getElementById('generateBtn');
+            const ingredients = document.getElementById('ingredients').value;
+            const style = document.getElementById('style').value;
+            const difficulty = document.getElementById('difficulty').value;
 
-            // 입력값 유효성 검사 (간단하게 필수값 체크)
-            if (!company || !jobTitle || !question || !answer) {
-                alert("모든 입력란을 채워주세요.");
-                return;
-            }
-
-            // 로딩 UI 설정
-            loadingMessage.style.display = 'block';
-            errorMessage.style.display = 'none';
-            generateBtn.disabled = true;
-            questionsDiv.textContent = '질문 생성 중...';
-            answerDiv.textContent = '모범 답변 생성 중...';
-
-            // 서버에 전송할 JSON 데이터 구성
-            const requestData = {
-                company: company,
-                jobTitle: jobTitle,
-                resumeQuestion: question,
-                myAnswer: answer
+            const dataToSend = {
+                ingredients: ingredients,
+                style: style,
+                difficulty: difficulty,
             };
 
+            // UI 상태 변경: 버튼 비활성화 및 로딩 메시지 표시
+            submitButton.disabled = true;
+            outputDiv.innerHTML = '<p class="loading-text">🤖 AI가 냉장고 속 마법을 부리는 중입니다... 잠시만 기다려주세요.</p>';
+
+
             try {
-                // SERVER_URL이 비어있지 않은 경우 실제 통신 시도
-                if (SERVER_URL) {
-                    const response = await fetch(SERVER_URL, {
-                        method: 'POST', // 통신 방식: method: 'POST'
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        // JSON 데이터: 입력 필드의 데이터를 모아 JSON 형태로 서버에 전송
-                        body: JSON.stringify(requestData) 
-                    });
+                // 핵심 요구 사항: fetch 함수를 사용한 POST 통신
+                const response = await fetch(SERVER_URL, {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    // JSON 데이터 전송
+                    body: JSON.stringify(dataToSend),
+                });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-
-                    // 결과 영역에 표시
-                    questionsDiv.textContent = result.expectedQuestions || "예상 질문을 받아오지 못했습니다.";
-                    answerDiv.textContent = result.modelAnswer || "모범 답변을 받아오지 못했습니다.";
-                    
-                } else {
-                    // SERVER_URL이 비어있는 경우 (현재 요구 사항)
-                    // 통신 대신 가상의 데이터로 성공인 척 함 (실제 구현 시 삭제)
-                    questionsDiv.textContent = `
-1. 자기소개서에 작성하신 '데이터 분석 역량'은 해당 직무에서 구체적으로 어떻게 활용될 수 있을까요?
-2. 경험을 통해 알 수 있는 본인의 가장 큰 강점과 약점은 무엇이며, 약점을 보완하기 위한 노력은?
-3. 저희 회사/직무에 지원하게 된 특별한 계기나 비전이 있습니까?
-                    `.trim();
-                    answerDiv.textContent = `
-[모범 답변 가이드]
-1. 답변의 핵심 역량을 직무와 연결하는 구체적인 사례를 제시하십시오.
-2. STAR 기법(Situation, Task, Action, Result)을 활용하여 경험을 구조화하십시오.
-3. 질문에 대한 답변은 간결하고 자신감 있게 전달하며, 마지막에 항상 질문 기회가 있는지 확인하십시오.
-                    `.trim();
-                    
-                    // 주의: 현재는 SERVER_URL이 비어있으므로, 통신은 catch 블록에서 오류를 반환해야 하지만,
-                    // 사용자 경험을 위해 가상 성공 처리 후, 잠시 후 강제 오류 발생 (실제 구현 시 삭제)
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    throw new Error("SERVER_URL is empty. Simulating API communication error as requested."); 
+                if (!response.ok) {
+                    throw new Error(`HTTP Error! Status: ${response.status}`);
                 }
+
+                const result = await response.json();
+                
+                // 실제 서버 응답을 출력하는 로직
+                displayRecipe(result.recipe_content, result.tip || null);
 
             } catch (error) {
-                // 서버 통신 오류 처리
-                console.error("Fetch Error:", error);
+                console.error('API 통신 오류 발생. (현재 SERVER_URL이 임시 주소이므로 예상된 오류입니다.)', error);
                 
-                // 주의: 현재는 SERVER_URL이 비어있으므로, 통신은 catch 블록에서 오류를 반환함.
-                errorMessage.textContent = `API 통신 실패: ${error.message}. Backend 연결 시 실제 통신이 가능합니다.`;
-                errorMessage.style.display = 'block';
-                
-                // 통신 실패 시 결과 영역 초기화 또는 오류 메시지 표시
-                if (SERVER_URL) { // 실제 통신 시도 시에만 초기화
-                    questionsDiv.textContent = '데이터를 불러오는 데 실패했습니다.';
-                    answerDiv.textContent = '데이터를 불러오는 데 실패했습니다.';
-                }
-                
+                // 통신 실패 시 시뮬레이션된 성공 응답 출력 (개발 테스트용)
+                simulateSuccess(dataToSend);
+
             } finally {
-                // 로딩 UI 해제
-                loadingMessage.style.display = 'none';
-                generateBtn.disabled = false;
+                submitButton.disabled = false;
             }
         }
+
+        /**
+         * 개발 테스트를 위해 성공 결과를 시뮬레이션하는 함수
+         */
+        function simulateSuccess(inputData) {
+            const recipeTitle = `✨ 제미나이 특제 ${inputData.style} 요리: 베이컨 에그 라이스볼`;
+            const recipeContent = `
+[요리명]: ${recipeTitle}
+
+[사용된 재료]: ${inputData.ingredients}
+
+[요리 스타일]: ${inputData.style} (${inputData.difficulty})
+
+---
+
+**🔥 레시피 순서**
+
+1.  **재료 준비:** 양파는 잘게 다지고, 베이컨은 1cm 크기로 썰어줍니다. 달걀은 풀어서 소금 간을 해둡니다.
+2.  **볶기:** 팬에 기름을 두르고 다진 양파와 베이컨을 노릇하게 볶아줍니다. 밥을 넣고 굴 소스나 소금으로 간을 맞춰 고루 볶아줍니다.
+3.  **달걀:** 볶은 밥을 한쪽으로 밀고, 풀은 달걀물을 부어 스크램블 에그를 만듭니다. 밥과 함께 섞어줍니다.
+4.  **플레이팅:** 볶은 밥을 작은 공기에 담아 모양을 잡고 접시에 뒤집어 올려줍니다. 파슬리나 깨를 뿌려 마무리합니다.
+`; // 본문에서 팁 내용을 분리
+            const tip = "파스타면이 있다면 밥 대신 파스타를 삶아 '베이컨 에그 파스타'로 응용할 수도 있습니다. 소스 베이스를 크림이나 토마토로 바꾸면 또 다른 맛을 낼 수 있어요! 냉장고에 치즈가 있다면 마지막에 뿌려주면 풍미가 훨씬 살아납니다.";
+            
+            displayRecipe(recipeContent, tip);
+        }
+
+        /**
+         * 레시피 결과를 HTML에 출력하는 함수
+         */
+        function displayRecipe(recipeContent, tip) {
+            // 레시피 제목을 추출하여 별도의 스타일로 표시
+            const titleMatch = recipeContent.match(/\[요리명\]:\s*(.*)/);
+            const title = titleMatch ? titleMatch[1].trim() : "새로운 AI 레시피";
+
+            let html = `
+                <div class="recipe-title">${title}</div>
+                <pre>${recipeContent.trim()}</pre>
+            `;
+            
+            // ******************************************* // 추가 팁 항목을 별도의 .tip-section으로 강조하여 추가
+            // *******************************************
+            if (tip) {
+                html += `
+                    <div class="tip-section">
+                        <h3>셰프의 추가 팁</h3>
+                        <p>${tip}</p>
+                    </div>
+                `;
+            }
+
+            outputDiv.innerHTML = html;
+        }
+
+        /**
+         * 폼 제출 이벤트 핸들러
+         */
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // 기본 폼 제출 동작 방지
+            register();
+        });
+        
     </script>
 </body>
 </html>
-
-
-
